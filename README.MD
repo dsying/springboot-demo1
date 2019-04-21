@@ -67,10 +67,55 @@ public HelloController(OrderService orderService) {
 
 # docker
 ## docker容器中使用mysql
+
+### 从docker hub的仓库中拉取mysql镜像 
 ```bash
-docker run --name mysql1 -e MYSQL_ROOT_PASSWORD=my-secret-pw -e MYSQL_DATABASE=xdml -p 3306:3306 -d mysql
+sudo docker pull mysql
 ```
-docker run --name mysql1 mysql: 使用mysql这个镜像创建一个名为 mysql1 的 容器 
--e MYSQL_ROOT_PASSWORD=my-secret-pw： 指定root用户密码
--e MYSQL_DATABASE=xdml 指定数据库名
--p 3306:3306 将宿主(本地)端口 和 容器端口 绑定
+### 运行一个mysql容器
+```bash
+docker run --name docker_mysql_1 -e MYSQL_ROOT_PASSWORD=19920115asd -e MYSQL_DATABASE=dsying -p 3306:3306 -d mysql mysqld --default-authentication-plugin=mysql_native_password
+```
+上述命令各个参数含义：
+```
+docker run      :运行一个容器 使用mysql这个镜像创建一个名为 mysql1 的 容器 
+--name          :后面是这个镜像的名称
+-e MYSQL_ROOT_PASSWORD=my-secret-pw :指定root用户密码
+-e MYSQL_DATABASE=xdml  :指定数据库名
+-p 3306:3306    :将宿主(本地)端口 和 容器端口 绑定
+-d              :表示使用守护进程运行，即服务挂在后台
+mysqld --default-authentication-plugin=mysql_native_password  :新版本的MySQL使用caching_sha2_password而不是mysql_native_password
+```
+
+# springboot 连接mybatis
+## 创建datasource
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/dsying?characterEncoding=utf8&useSSL=false
+spring.datasource.username=root
+spring.datasource.password=19920115asd
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+```
+## 创建一个mapper并通过 @Component生成bean
+```java
+@Mapper
+@Component
+public interface UserMapper {
+    @Select("SELECT * FROM user WHERE id = #{id}")
+    User getUserById(@Param("id") Integer id);
+}
+```
+## 注入mapper的 bean
+```java
+public class UserService {
+    UserMapper userMapper;
+
+    @Inject
+    public UserService(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
+
+    public User getUserById(Integer id) {
+        return userMapper.getUserById(id);
+    }
+}
+```

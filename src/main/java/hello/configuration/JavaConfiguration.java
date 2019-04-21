@@ -1,4 +1,5 @@
 package hello.configuration;
+import hello.mapper.UserMapper;
 import hello.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class JavaConfiguration {
 
     @Bean
-    public UserService userService(){
-        return new UserService();
+    public UserService userService(UserMapper userMapper){
+        return new UserService(userMapper);
     }
 }
