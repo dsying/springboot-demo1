@@ -31,8 +31,8 @@ gen### Java template
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-README.MD
-pom.xml
+# README.MD
+# pom.xml
 # src/
 target/classes/applicationContext.xml
 target/generated-sources/
