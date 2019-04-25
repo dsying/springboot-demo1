@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -33,16 +34,21 @@ public class AuthController {
     public Result login(@RequestBody Map<String, Object> reqBody) {
         String username = reqBody.get("username").toString();
         String password = reqBody.get("password").toString();
-        // 使用userDetailsService这个服务通过用户名去查找相应的 用户详情
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        // 生成token
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, password);
-        // 鉴权 token
+        UserDetails userDetails;
         try {
+            // 1 使用userDetailsService这个服务通过用户名去查找相应的 用户详情
+            userDetails = userDetailsService.loadUserByUsername(username);
+        }catch (UsernameNotFoundException e){
+            return new Result("fail", "用户名不存在", false);
+        }
+        // 2 找到用户并 根据 username和password 生成token
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, password);
+        try {
+            // 3 鉴权 token
             authenticationManager.authenticate(token);
+            // 4 保存 token 到上下文中
             SecurityContextHolder.getContext().setAuthentication(token);
-            User loginedUser = new User(1, "张三");
-            return new Result("OK", "登录成功", true, loginedUser);
+            return new Result("OK", "登录成功", true, new User(1, "张三"));
         }catch (BadCredentialsException e){
             return new Result("fail", "密码不正确", false);
         }

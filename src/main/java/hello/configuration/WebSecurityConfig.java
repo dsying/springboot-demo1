@@ -6,10 +6,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity // spring开启安全配置, 拦截所有请求，
@@ -22,7 +20,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-    @Bean
+/*    @Bean
     @Override
     public UserDetailsService userDetailsService() {
         UserDetails user =
@@ -33,10 +31,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .build();
 
         return new InMemoryUserDetailsManager(user);
-    }
+    }*/
 
+    // AuthController 中会用到这个bean
     @Bean
     public AuthenticationManager customAuthenticationManager() throws Exception {
         return authenticationManager();
     }
+
+
+    /*
+     * https://www.baeldung.com/spring-security-registration-password-encoding-bcrypt
+     * 首先将简单的BCryptPasswordEncoder定义为我们配置中的bean
+     * */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.authenticationProvider(authProvider());
+//    }
 }
