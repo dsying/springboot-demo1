@@ -1,12 +1,12 @@
 package hello.controller;
 
 import hello.entity.User;
+import hello.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,18 +15,26 @@ import java.util.Map;
 
 @RestController
 public class AuthController {
-    private UserDetailsService userDetailsService;
+    private UserService userService;
     private AuthenticationManager authenticationManager;
 
     @Inject
-    public AuthController(UserDetailsService userDetailsService, AuthenticationManager authenticationManager) {
-        this.userDetailsService = userDetailsService;
+    public AuthController(UserService userService, AuthenticationManager authenticationManager) {
+        this.userService = userService;
         this.authenticationManager = authenticationManager;
     }
 
     @GetMapping("/auth")
-    public Result auth(){
-        return new Result("success", "成功", true);
+    public Result auth() {
+        // 首次登录时 请求cookie中不会携带 JSESSIONID，认证失败
+        // 登录成功后 再次请求，此时cookie中 就会携带 JSESSIONID，则认证成功
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(userName.contains("anonymous")){
+            return new Result("success", "用户未登录", false);
+        }else {
+            return new Result("success", null, true, userService.getUserByUserName(userName));
+        }
+
     }
 
     @PostMapping("/auth/login")
@@ -37,7 +45,7 @@ public class AuthController {
         UserDetails userDetails;
         try {
             // 1 使用userDetailsService这个服务通过用户名去查找相应的 用户详情
-            userDetails = userDetailsService.loadUserByUsername(username);
+            userDetails = userService.loadUserByUsername(username);
         }catch (UsernameNotFoundException e){
             return new Result("fail", "用户名不存在", false);
         }
@@ -46,7 +54,8 @@ public class AuthController {
         try {
             // 3 鉴权 token
             authenticationManager.authenticate(token);
-            // 4 保存 token 到上下文中
+            // 4.1 设置Response Header:   Set-Cookie: JSESSIONID=29BBFCF8EB1C92238BA9CB81B53B9023; Path=/; HttpOnly
+            // 4.2 把JSESSIONID保存到上下文中
             SecurityContextHolder.getContext().setAuthentication(token);
             return new Result("OK", "登录成功", true, new User(1, "张三"));
         }catch (BadCredentialsException e){

@@ -1,5 +1,6 @@
 package hello.service;
 
+import hello.entity.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -42,5 +43,9 @@ public class UserService implements UserDetailsService {
         String encodedPassword = userMap.get(username);
         // 该User是 UserDetails接口的一个实现
         return new org.springframework.security.core.userdetails.User(username, encodedPassword, Collections.emptyList());
+    }
+
+    public User getUserByUserName(String username){
+        return new User(1, "dsying");
     }
 }

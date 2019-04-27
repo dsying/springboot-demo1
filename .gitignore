@@ -34,5 +34,6 @@ hs_err_pid*
 # README.MD
 # pom.xml
 # src/
+target/*
 target/classes/applicationContext.xml
 target/generated-sources/
