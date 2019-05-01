@@ -57,7 +57,7 @@ public class AuthController {
             // 4.1 设置Response Header:   Set-Cookie: JSESSIONID=29BBFCF8EB1C92238BA9CB81B53B9023; Path=/; HttpOnly
             // 4.2 把JSESSIONID保存到上下文中
             SecurityContextHolder.getContext().setAuthentication(token);
-            return new Result("OK", "登录成功", true, new User(1, "张三"));
+            return new Result("OK", "登录成功", true, new User(username));
         }catch (BadCredentialsException e){
             return new Result("fail", "密码不正确", false);
         }
