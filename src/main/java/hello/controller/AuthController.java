@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.util.Map;
 
+/**
+ * 用户模块
+ * 登录，注册，登出，鉴权
+ */
 @RestController
 public class AuthController {
     private UserService userService;
@@ -37,6 +41,24 @@ public class AuthController {
 
     }
 
+    @PostMapping("/auth/register")
+    @ResponseBody
+    public Result register(@RequestBody Map<String, Object> reqBody) {
+        String username = reqBody.get("username").toString();
+        String password = reqBody.get("password").toString();
+        if(username == null || password == null) {
+            return new Result("fail", "用户名或密码不能为空", false);
+        }
+        if(username.length() < 1 || username.length() > 15){
+            return new Result("fail", "invalid username", false);
+        }
+        if(password.length() < 1 || password.length() > 16){
+            return new Result("fail", "invalid password", false);
+        }
+        userService.save(username, password);
+        return new Result("success", "success", true);
+    }
+
     @PostMapping("/auth/login")
     @ResponseBody
     public Result login(@RequestBody Map<String, Object> reqBody) {
@@ -57,11 +79,25 @@ public class AuthController {
             // 4.1 设置Response Header:   Set-Cookie: JSESSIONID=29BBFCF8EB1C92238BA9CB81B53B9023; Path=/; HttpOnly
             // 4.2 把JSESSIONID保存到上下文中
             SecurityContextHolder.getContext().setAuthentication(token);
-            return new Result("OK", "登录成功", true, new User(username));
+            return new Result("ok", "登录成功", true, new User(username));
         }catch (BadCredentialsException e){
             return new Result("fail", "密码不正确", false);
         }
     }
+
+    @GetMapping("/auth/logout")
+    @ResponseBody
+    public Result logout() {
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(userName == null){
+            return new Result("fail", "用户未登录", false);
+        }else {
+            // 清除上下文
+            SecurityContextHolder.clearContext();
+            return new Result("ok", "注销成功",true);
+        }
+    }
+
 
     private static class Result{
         String status;
