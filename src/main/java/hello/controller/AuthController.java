@@ -2,6 +2,7 @@ package hello.controller;
 
 import hello.entity.User;
 import hello.service.UserService;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -55,7 +56,14 @@ public class AuthController {
         if(password.length() < 1 || password.length() > 16){
             return new Result("fail", "invalid password", false);
         }
-        userService.save(username, password);
+        try {
+            // 通过给 username字段 设置 unique索引， 捕获重复异常
+            userService.save(username, password);
+        }catch (DuplicateKeyException e) {
+            e.printStackTrace();
+            return new Result("fail", "user already exist", false);
+        }
+
         return new Result("success", "success", true);
     }
 
