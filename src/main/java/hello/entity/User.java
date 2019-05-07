@@ -14,6 +14,13 @@ public class User {
         this.username = username;
     }
 
+    public User(Integer id, String username, String encryptedPassword) {
+        this.id = id;
+        this.username = username;
+        this.encryptedPassword = encryptedPassword;
+    }
+
+
     public User(Integer id, String username, String encryptedPassword, String avatar, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.username = username;
