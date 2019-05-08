@@ -6,6 +6,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,11 +34,12 @@ public class AuthController {
     public Result auth() {
         // 首次登录时 请求cookie中不会携带 JSESSIONID，认证失败
         // 登录成功后 再次请求，此时cookie中 就会携带 JSESSIONID，则认证成功
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(userName.contains("anonymous")){
-            return new Result("success", "用户未登录", false);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication == null ? "" : authentication.getName();
+        if(userName == ""){
+            return new Result("false", "用户未登录", false);
         }else {
-            return new Result("success", null, true, userService.getUserByUserName(userName));
+            return new Result("success", "用户已登录", true, userService.getUserByUserName(userName));
         }
 
     }
