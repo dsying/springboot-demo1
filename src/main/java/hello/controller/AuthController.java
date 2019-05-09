@@ -82,7 +82,7 @@ public class AuthController {
             return new Result("fail", "用户名不存在", false);
         }
         // 2 找到用户并 根据 username和password 生成token
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, password);
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
         try {
             // 3 鉴权 token
             authenticationManager.authenticate(token);
