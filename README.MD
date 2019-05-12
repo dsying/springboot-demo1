@@ -136,3 +136,12 @@ create table user
         unique (username)
 );
 ```
+
+## 持续集成
+### travis ci
+```yml
+language: java
+jdk:
+  - openjdk8
+script: mvn verify
+```
