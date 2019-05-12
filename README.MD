@@ -211,7 +211,9 @@ script: mvn verify
 ```
 
 ### jenkins
-
+```bash
+docker run -p 8080:8080 -v /Users/dsying/development/java/springboot-demo/jenkins-data:/var/jenkins_home jenkins/jenkins
+```
 
 ## maven wrapper
 **启动jenkins的docker容器中 是没有 maven的, 使用maven wrapper可以自动下载maven**
