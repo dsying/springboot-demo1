@@ -211,4 +211,25 @@ script: mvn verify
 ```
 
 ### jenkins
-密码: a75c7a20794a41219e939907233aba3b
+
+
+## maven wrapper
+**启动jenkins的docker容器中 是没有 maven的, 使用maven wrapper可以自动下载maven**
+
+执行下面命令，生成三个文件
+```bash
+mvn -N io.takari:maven:wrapper
+```
++ mvnw
++ mvnw.cmd
++ .mvn
+    + └── wrapper
+        + ├── MavenWrapperDownloader.java
+        + ├── maven-wrapper.jar
+        + └── maven-wrapper.properties
+
+其中**maven-wrapper.properties**配置了 maven的下载路径
+```properties
+distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.6.1/apache-maven-3.6.1-bin.zip
+wrapperUrl=https://repo.maven.apache.org/maven2/io/takari/maven-wrapper/0.5.5/maven-wrapper-0.5.5.jar
+```
