@@ -230,7 +230,7 @@ mvn -N io.takari:maven:wrapper
 
 其中**maven-wrapper.properties**配置了 maven的下载路径
 ```properties
-distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.6.1/apache-maven-3.6.1-bin.zip
+distributionUrl=https://wtff.oss-cn-shanghai.aliyuncs.com/apache-maven-3.6.1-bin.zip
 wrapperUrl=https://repo.maven.apache.org/maven2/io/takari/maven-wrapper/0.5.5/maven-wrapper-0.5.5.jar
 ```
 
