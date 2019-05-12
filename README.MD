@@ -137,6 +137,70 @@ create table user
 );
 ```
 
+## FlyWay 数据库迁移自动化
+**flyway会在目标数据库中 自动执行 约定目录下的 sql脚本**
+
+### 创建sql脚本(约定目录下)
+- src/main/resources/db/migration
+
+### flyway的maven插件
+```xml
+            <!-- flyway 数据库迁移工具 -->
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>5.2.4</version>
+                <configuration>
+                    <url>jdbc:mysql://127.0.0.1:3306/dsying?useSSL=false</url>
+                    <user>root</user>
+                    <password>19920115asd</password>
+                </configuration>
+            </plugin>
+```
+
+### 执行命令
+```bash
+mvn flyway:migrate
+```
+
+## 单元测试 VS 集成测试
+### maven脚本
+```xml
+            <!--    单元测试  -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+                <configuration>
+                    <!--       单元测试阶段排除 集成测试代码             -->
+                    <excludes>
+                        <exclude>**/*IntegrationTest</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <!--   集成测试   -->
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.0</version>
+                <configuration>
+                    <!--       只包含集成测试代码             -->
+                    <includes>
+                        <include>**/*IntegrationTest</include>
+                    </includes>
+                </configuration>
+            </plugin>
+```
+### 对应的生命周期
+- 单元测试: maven的 test阶段 
+```bash
+mvn test
+```
+
+- 集成测试: maven的 integration阶段
+```bash
+mvn clear verify
+```
+
+
 ## 持续集成
 ### travis ci
 ```yml
@@ -145,3 +209,6 @@ jdk:
   - openjdk8
 script: mvn verify
 ```
+
+### jenkins
+密码: a75c7a20794a41219e939907233aba3b
