@@ -215,7 +215,7 @@ script: mvn verify
 
 ## maven wrapper
 **启动jenkins的docker容器中 是没有 maven的, 使用maven wrapper可以自动下载maven**
-
+### 在没有maven的机器中 也能执行maven命令
 执行下面命令，生成三个文件
 ```bash
 mvn -N io.takari:maven:wrapper
@@ -232,4 +232,9 @@ mvn -N io.takari:maven:wrapper
 ```properties
 distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.6.1/apache-maven-3.6.1-bin.zip
 wrapperUrl=https://repo.maven.apache.org/maven2/io/takari/maven-wrapper/0.5.5/maven-wrapper-0.5.5.jar
+```
+
+用下面命令替换 mvn test
+```bash
+./mvnw test
 ```
