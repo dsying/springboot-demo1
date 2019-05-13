@@ -114,5 +114,20 @@ class AuthControllerTest {
                     System.out.println(result.getResponse().getContentAsString());
                     Assertions.assertTrue(result.getResponse().getContentAsString().contains("MyUser"));
                 });
+
+        mockMvc.perform(get("/auth/logout")).andExpect(status().isOk())
+                .andExpect(logoutResult -> {
+                    System.out.println(logoutResult.getResponse().getContentAsString());
+                    Assertions.assertTrue(logoutResult.getResponse().getContentAsString().contains("注销成功"));
+                });
+    }
+
+    @Test
+    void testLogout() throws Exception{
+        mockMvc.perform(get("/auth/logout")).andExpect(status().isOk())
+                .andExpect(mvcResult -> {
+                    System.out.println(mvcResult.getResponse().getContentAsString());
+                    Assertions.assertTrue(mvcResult.getResponse().getContentAsString().contains("用户未登录"));
+                });
     }
 }

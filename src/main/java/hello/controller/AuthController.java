@@ -36,7 +36,7 @@ public class AuthController {
         // 登录成功后 再次请求，此时cookie中 就会携带 JSESSIONID，则认证成功
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication == null ? "" : authentication.getName();
-        if(userName == ""){
+        if(userName == "" || userName == "anonymousUser"){
             return new Result("false", "用户未登录", false);
         }else {
             return new Result("success", "用户已登录", true, userService.getUserByUserName(userName));
@@ -98,8 +98,9 @@ public class AuthController {
     @GetMapping("/auth/logout")
     @ResponseBody
     public Result logout() {
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(userName == null){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication == null ? "" : authentication.getName();
+        if(userName == "" || userName == "anonymousUser"){
             return new Result("fail", "用户未登录", false);
         }else {
             // 清除上下文
